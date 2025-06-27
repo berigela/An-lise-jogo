@@ -1,0 +1,164 @@
+<!DOCTYPE html><html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ordem das Bestas Sagradas</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #f9f4e7;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      color: #543c1c;
+      font-size: 6vw;
+    }
+    p {
+      font-size: 4vw;
+      margin-bottom: 10px;
+    }
+    .beasts {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .beast {
+      font-size: 10vw;
+      cursor: pointer;
+      border: 2px solid #543c1c;
+      border-radius: 10px;
+      padding: 10px;
+      background-color: #fff;
+      flex: 1 1 60px;
+      max-width: 80px;
+    }
+    .selected {
+      background-color: #ffe89c;
+    }
+    .results {
+      margin-top: 20px;
+    }
+    .result {
+      font-size: 4.5vw;
+      margin: 5px 0;
+    }
+    .button-group {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    button {
+      font-size: 4vw;
+      padding: 10px 15px;
+      background-color: #543c1c;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      flex: 1 1 120px;
+    }
+    @media (min-width: 600px) {
+      h1 { font-size: 32px; }
+      p, .result, button { font-size: 18px; }
+      .beast { font-size: 32px; max-width: 60px; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🐉 Ordem das Bestas Sagradas 🐍</h1>
+  <p>Escolha a ordem das criaturas para abrir a porta mágica:</p>  <div class="beasts" id="options"></div>
+  <div class="beasts" id="selection"></div>  <div class="button-group">
+    <button onclick="submitGuess()">✅ Confirmar</button>
+    <button onclick="clearResults()">🔄 Limpar</button>
+    <button onclick="newSecret()">♻️ Nova Ordem</button>
+  </div>  <div class="results" id="results"></div>  <script>
+    const beasts = ['🐉', '🦉', '🐍', '🐺'];
+    let secret = [];
+    let selection = [];
+
+    function shuffle(arr) {
+      return arr.sort(() => Math.random() - 0.5);
+    }
+
+    function createOptions() {
+      const optionsDiv = document.getElementById('options');
+      optionsDiv.innerHTML = '';
+      beasts.forEach(beast => {
+        const btn = document.createElement('div');
+        btn.classList.add('beast');
+        btn.textContent = beast;
+        btn.onclick = () => selectBeast(beast);
+        optionsDiv.appendChild(btn);
+      });
+    }
+
+    function selectBeast(beast) {
+      if (selection.includes(beast) || selection.length >= 4) return;
+      selection.push(beast);
+      updateSelection();
+    }
+
+    function updateSelection() {
+      const selDiv = document.getElementById('selection');
+      selDiv.innerHTML = '';
+      selection.forEach(beast => {
+        const span = document.createElement('div');
+        span.classList.add('beast', 'selected');
+        span.textContent = beast;
+        selDiv.appendChild(span);
+      });
+    }
+
+    function submitGuess() {
+      if (selection.length !== 4) {
+        alert('Escolha 4 criaturas.');
+        return;
+      }
+      let result = '';
+      selection.forEach((b, i) => {
+        if (b === secret[i]) {
+          result += `✅ ${b} `;
+        } else if (secret.includes(b)) {
+          result += `🔄 ${b} `;
+        } else {
+          result += `❌ ${b} `;
+        }
+      });
+      const resDiv = document.getElementById('results');
+      const p = document.createElement('div');
+      p.classList.add('result');
+      p.textContent = result;
+      resDiv.appendChild(p);
+      if (selection.join('') === secret.join('')) {
+        alert('✨ Você descobriu a ordem das Bestas Sagradas! ✨');
+      }
+      selection = [];
+      updateSelection();
+    }
+
+    function clearResults() {
+      document.getElementById('results').innerHTML = '';
+      selection = [];
+      updateSelection();
+    }
+
+    function newSecret() {
+      secret = shuffle([...beasts]);
+      console.log('Nova ordem secreta:', secret);
+      clearResults();
+    }
+
+    createOptions();
+    newSecret();
+  </script></body>
+</html>
